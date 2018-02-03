@@ -6,6 +6,8 @@ import { NavController, IonicPage } from 'ionic-angular';
   templateUrl: 'home.html'
 })
 export class HomePage {
+  onNextLoopStop: boolean = false;
+  loadingStatus: string = 'loading';
 
   selectedAnimation: any = "interactive";
   animations: any;
@@ -18,7 +20,8 @@ export class HomePage {
     prerender: false,
     autoplay: false,
     autoloadSegments: false,
-    path: 'assets/animations/other/jake.json'
+    // path: 'assets/animations/other/jake.json'
+    path: 'assets/animations/loading_success_fail/loader-success-failed.json'
   }
 
   lottieAnimations = [
@@ -36,7 +39,7 @@ export class HomePage {
       path: 'assets/animations/lottie/LottieLogo2.json'
     }, {
       path: 'assets/animations/lottie/9squares-AlBoardman.json'
-    }
+    },
   ];
 
   bodymovinAnimations = [
@@ -58,6 +61,8 @@ export class HomePage {
       path: 'assets/animations/other/tibetan-monk.json'
     }, {
       path: 'assets/animations/other/bobber.json'
+    }, {
+      path: 'assets/animations/loading_success_fail/loader-success-failed.json'
     }
   ]
 
@@ -85,8 +90,53 @@ export class HomePage {
       this.anim.setSpeed(this.animationSpeed);
   }
 
+  /**
+   * loader-success-failed
+   *
+   * 0 120 loader part1
+   * 119 239 loader part 2
+   *
+   * 238 423 success
+   *
+   * 418 538 loader part 1
+   * 537 657 loader part 2
+   *
+   * 657 841 error
+   */
+  /**
+   * How to use:
+   *  1) We initiate animate to start the anim
+   *  2) when done or err we set this.loadingStatus to 'success' or error'
+   *     when loader loop ends, il will trigger the succ or err loop and stop
+   */
   animate() {
-    this.anim.playSegments([[27, 142], [14, 26]], true);
+    this.anim.playSegments([[0, 239]], true);
+    this.anim.addEventListener("loopComplete", res => {
+      console.log('loopComplete...', res)
+      if(this.onNextLoopStop) {
+        this.anim.stop()
+      } else {
+        this.triggerNextLoop()
+      }
+    });
+
+    // debug/test
+    setTimeout(() => {
+      this.loadingStatus = 'success';
+      console.log('success...')
+    }, 8000);
+  }
+
+
+  triggerNextLoop() {
+    if(this.loadingStatus === 'success') {
+      this.anim.playSegments([[238, 423]], true);
+      this.onNextLoopStop = true;
+    }
+    if(this.loadingStatus === 'error') {
+      this.anim.playSegments([[657, 841]], true);
+      this.onNextLoopStop = true;
+    }
   }
 
   changeAnimations() {

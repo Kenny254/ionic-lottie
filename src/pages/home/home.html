@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-segment [(ngModel)]="selectedAnimation" color="danger" (ionChange)="changeAnimations()">
+  <ion-segment [(ngModel)]="selectedAnimation" color="danger" (tap)="changeAnimations()">
     <ion-segment-button value="interactive" selected="true">
       Interactive
     </ion-segment-button>
